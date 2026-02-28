@@ -3,193 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Precificador DuChapéu</title>
-    
+    <title>DuChapéu - Precificação</title>
     <link rel="apple-touch-icon" href="duchapeu_logo.png">
-    
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --bg: #f2f2f7;
-            --accent: #b8860b; /* Tom Dourado/Bronze para combinar com a marca */
-            --dark: #1c1c1e;
-            --glass: rgba(255, 255, 255, 0.95);
-        }
-
-        body { 
-            font-family: -apple-system, system-ui, sans-serif;
-            background-color: var(--bg);
-            color: #1c1c1e;
-            margin: 0; padding: 20px;
-            padding-top: env(safe-area-inset-top);
-        }
-
-        .logo-container {
-            text-align: center;
-            margin: 20px 0;
-        }
+        :root { --bg: #f2f2f7; --accent: #b8860b; --dark: #1c1c1e; --success: #34c759; }
         
-        .logo-container img {
-            max-height: 80px;
-            max-width: 220px;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        /* Reset para evitar números brancos */
+        * { color: #1c1c1e; } 
+        
+        body { 
+            font-family: -apple-system, sans-serif; 
+            background-color: var(--bg); 
+            margin: 0; padding: 20px; 
+            padding-top: env(safe-area-inset-top); 
+            padding-bottom: 40px; 
         }
 
-        .section-header { 
-            font-size: 11px; font-weight: 600; color: #8e8e93; 
-            margin: 15px 0 8px 10px; text-transform: uppercase; letter-spacing: 0.8px;
-        }
+        .logo-container { text-align: center; margin-bottom: 20px; }
+        .logo-container img { max-height: 70px; max-width: 200px; }
+
+        .section-header { font-size: 11px; font-weight: 600; color: #8e8e93; margin: 15px 0 8px 10px; text-transform: uppercase; }
 
         .card { 
-            background: var(--glass);
-            border-radius: 18px;
-            padding: 5px 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-            margin-bottom: 15px;
-            border: 1px solid rgba(0,0,0,0.03);
+            background: #ffffff; 
+            border-radius: 18px; 
+            padding: 5px 15px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
+            margin-bottom: 15px; 
+            border: 1px solid rgba(0,0,0,0.05); 
         }
 
-        .input-group {
-            display: flex; align-items: center;
-            padding: 14px 0;
-            border-bottom: 0.5px solid rgba(0,0,0,0.05);
-        }
-        .input-group:last-child { border-bottom: none; }
+        .row { display: flex; align-items: center; padding: 12px 0; border-bottom: 0.5px solid #f2f2f7; }
+        .row:last-child { border-bottom: none; }
+        
+        label { flex: 1; font-size: 14px; font-weight: 500; color: #3a3a3c; }
 
-        .icon-box {
-            width: 30px; height: 30px; border-radius: 8px;
-            background: rgba(184, 134, 11, 0.1); color: var(--accent);
-            display: flex; align-items: center; justify-content: center;
-            margin-right: 12px; font-size: 14px;
-        }
-
-        label { flex: 1; font-size: 15px; font-weight: 500; }
-
-        input {
-            width: 90px; border: none; background: #f2f2f7;
-            text-align: right; font-size: 16px; font-weight: 700;
-            color: var(--dark); outline: none; padding: 8px; border-radius: 8px;
-        }
-
-        .btn-save {
-            font-size: 10px; font-weight: 700; color: #34c759;
-            background: rgba(52, 199, 89, 0.1); padding: 6px 10px;
-            border-radius: 6px; border: none; margin-left: 10px;
-        }
-
-        /* Painel de Resultados Premium */
-        .result-panel {
-            background: var(--dark); color: #fff;
-            border-radius: 22px; padding: 25px;
-            margin-top: 20px; box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-            background: linear-gradient(145deg, #1c1c1e 0%, #3a3a3c 100%);
-        }
-
-        .res-main { text-align: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
-        .res-main span { font-size: 11px; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
-        .res-main h2 { font-size: 32px; margin: 8px 0; color: #fff; font-weight: 700; }
-
-        .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .res-box { text-align: center; padding: 12px; border-radius: 14px; background: rgba(255,255,255,0.05); }
-        .res-box span { font-size: 10px; opacity: 0.5; font-weight: 600; }
-        .res-box div { font-size: 19px; font-weight: 700; margin-top: 6px; }
-
-        .btn-calc {
-            width: 100%; padding: 18px; border-radius: 16px; border: none;
-            background: var(--accent); color: #fff; font-size: 17px; font-weight: 700;
-            margin-top: 25px; box-shadow: 0 6px 15px rgba(184, 134, 11, 0.3);
+        /* Estilo forçado para os Inputs não ficarem brancos */
+        .input-wrapper { 
+            display: flex; 
+            align-items: center; 
+            background: #f2f2f7 !important; 
+            padding: 6px 10px; 
+            border-radius: 8px; 
         }
         
-        .btn-clear {
-            width: 100%; background: none; color: #ff3b30; border: none;
-            font-size: 13px; font-weight: 500; margin: 20px 0;
+        .currency-prefix { font-size: 12px; font-weight: 700; color: #3a3a3c; margin-right: 4px; }
+
+        input { 
+            width: 85px; 
+            border: none; 
+            background: transparent !important; 
+            text-align: right; 
+            font-size: 16px; 
+            font-weight: 700; 
+            outline: none; 
+            color: #000000 !important; /* Força cor preta no texto */
+            -webkit-text-fill-color: #000000 !important; /* Força cor preta no iOS */
+        }
+
+        /* Linhas de totais com cor de fundo diferente para destaque */
+        .total-row { background: #fff9e6; border-radius: 10px; margin: 5px -5px; padding: 10px; }
+        .total-row label { color: var(--accent); font-weight: 700; }
+        .total-row span { color: var(--accent); font-weight: 800; }
+
+        .btn-fix { 
+            font-size: 9px; font-weight: 700; color: var(--success); 
+            background: rgba(52,199,89,0.1); padding: 6px 10px; 
+            border-radius: 6px; border: none; margin-left: 8px; 
+        }
+
+        /* Painel de Resultados (Texto Branco aqui é OK porque o fundo é Escuro) */
+        .res-panel { 
+            background: var(--dark); 
+            border-radius: 22px; 
+            padding: 20px; 
+            margin-top: 15px; 
+        }
+        .res-panel * { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+        
+        .res-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #3a3a3c; font-size: 13px; }
+        .highlight-atacado { color: #34c759 !important; -webkit-text-fill-color: #34c759 !important; font-size: 18px !important; }
+        .highlight-varejo { color: #ff9500 !important; -webkit-text-fill-color: #ff9500 !important; font-size: 18px !important; }
+
+        .btn-calc { 
+            width: 100%; padding: 18px; border-radius: 16px; border: none; 
+            background: var(--accent); color: #fff !important; 
+            -webkit-text-fill-color: #ffffff !important;
+            font-size: 17px; font-weight: 700; margin-top: 20px; 
         }
     </style>
 </head>
 <body>
 
     <div class="logo-container">
-        <img src="duchapeu_logo.png" alt="DuChapéu Logo" onerror="this.src='https://via.placeholder.com/200x80?text=DuChapéu'">
+        <img src="duchapeu_logo.png" alt="Logo DuChapéu" onerror="this.style.display='none'">
     </div>
 
-    <div class="section-header">Entrada de Valores</div>
+    <div class="section-header">Custo de Aquisição</div>
     <div class="card">
-        <div class="input-group">
-            <div class="icon-box"><i class="fa-solid fa-tag"></i></div>
-            <label>Custo Mercadoria</label>
-            <input type="number" id="mercadoria" placeholder="0,00" oninput="calcular()">
-        </div>
-        <div class="input-group">
-            <div class="icon-box"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-            <label>Imposto Compra (%)</label>
-            <input type="number" id="imp_compra" step="0.01">
-            <button class="btn-save" onclick="fixar('imp_compra')">FIXAR</button>
-        </div>
+        <div class="row"><label>Mercadoria</label><div class="input-wrapper"><span class="currency-prefix">R$</span><input type="number" id="mercadoria" oninput="calcular()"></div></div>
+        <div class="row"><label>Subst. Tributária</label><div class="input-wrapper"><span class="currency-prefix">R$</span><input type="number" id="st" oninput="calcular()"></div></div>
+        <div class="row"><label>IPI</label><div class="input-wrapper"><span class="currency-prefix">R$</span><input type="number" id="ipi" oninput="calcular()"></div></div>
+        <div class="row"><label>FRETE + SEGUROS</label><div class="input-wrapper"><span class="currency-prefix">R$</span><input type="number" id="frete" oninput="calcular()"></div></div>
     </div>
 
-    <div class="section-header">Taxas Operacionais</div>
+    <div class="section-header">Impostos s/ Compra</div>
     <div class="card">
-        <div class="input-group">
-            <div class="icon-box"><i class="fa-solid fa-percent"></i></div>
-            <label>Imposto Venda (%)</label>
-            <input type="number" id="imp_venda">
-            <button class="btn-save" onclick="fixar('imp_venda')">FIXAR</button>
-        </div>
-        <div class="input-group">
-            <div class="icon-box"><i class="fa-solid fa-hand-holding-dollar"></i></div>
-            <label>Comissão (%)</label>
-            <input type="number" id="comissao">
-            <button class="btn-save" onclick="fixar('comissao')">FIXAR</button>
-        </div>
-        <div class="input-group">
-            <div class="icon-box"><i class="fa-solid fa-warehouse"></i></div>
-            <label>Custos Fixos (%)</label>
-            <input type="number" id="custos">
-            <button class="btn-save" onclick="fixar('custos')">FIXAR</button>
-        </div>
+        <div class="row"><label>ICMS (%)</label><input type="number" id="icms_c" oninput="calcular()"><button class="btn-fix" onclick="fixar('icms_c')">FIXAR</button></div>
+        <div class="row"><label>PIS (%)</label><input type="number" id="pis_c" oninput="calcular()"><button class="btn-fix" onclick="fixar('pis_c')">FIXAR</button></div>
+        <div class="row"><label>COFINS (%)</label><input type="number" id="cofins_c" oninput="calcular()"><button class="btn-fix" onclick="fixar('cofins_c')">FIXAR</button></div>
+        <div class="row total-row"><label>Impostos total</label><span id="total_imp_c">0,00%</span></div>
     </div>
 
-    <div class="section-header">Margem de Lucro Desejada</div>
+    <div class="section-header">Variáveis de Venda</div>
     <div class="card">
-        <div class="input-group">
-            <div class="icon-box" style="color: #34c759;"><i class="fa-solid fa-boxes-stacked"></i></div>
-            <label>Atacado (%)</label>
-            <input type="number" id="lucro_at">
-            <button class="btn-save" onclick="fixar('lucro_at')">FIXAR</button>
-        </div>
-        <div class="input-group">
-            <div class="icon-box" style="color: #ff9500;"><i class="fa-solid fa-shop"></i></div>
-            <label>Varejo (%)</label>
-            <input type="number" id="lucro_va">
-            <button class="btn-save" onclick="fixar('lucro_va')">FIXAR</button>
-        </div>
+        <div class="row"><label>Comissão (%)</label><input type="number" id="comis" oninput="calcular()"><button class="btn-fix" onclick="fixar('comis')">FIXAR</button></div>
+        <div class="row"><label>MC (LUCRO) (%)</label><input type="number" id="lucro" oninput="calcular()"><button class="btn-fix" onclick="fixar('lucro')">FIXAR</button></div>
+        <div class="row"><label>Desconto (%)</label><input type="number" id="desc" oninput="calcular()"><button class="btn-fix" onclick="fixar('desc')">FIXAR</button></div>
+        <div class="row"><label>Custos/Despesas (%)</label><input type="number" id="custos_d" oninput="calcular()"><button class="btn-fix" onclick="fixar('custos_d')">FIXAR</button></div>
+    </div>
+
+    <div class="section-header">Impostos s/ Venda</div>
+    <div class="card">
+        <div class="row"><label>ICMS (%)</label><input type="number" id="icms_v" oninput="calcular()"><button class="btn-fix" onclick="fixar('icms_v')">FIXAR</button></div>
+        <div class="row"><label>PIS (%)</label><input type="number" id="pis_v" oninput="calcular()"><button class="btn-fix" onclick="fixar('pis_v')">FIXAR</button></div>
+        <div class="row"><label>COFINS (%)</label><input type="number" id="confins_v" oninput="calcular()"><button class="btn-fix" onclick="fixar('confins_v')">FIXAR</button></div>
+        <div class="row total-row"><label>Impostos total</label><span id="total_imp_v">0,00%</span></div>
     </div>
 
     <div class="result-panel">
-        <div class="res-main">
-            <span>Custo Líquido</span>
-            <h2 id="res_liq">R$ 0,00</h2>
-        </div>
-        <div class="res-grid">
-            <div class="res-box">
-                <span>PREÇO ATACADO</span>
-                <div id="res_atacado" style="color: #34c759;">R$ 0,00</div>
-            </div>
-            <div class="res-box">
-                <span>PREÇO VAREJO</span>
-                <div id="res_varejo" style="color: #ff9500;">R$ 0,00</div>
-            </div>
-        </div>
+        <div class="res-row"><span>Custo bruto</span><span class="res-val" id="r_bruto">R$ 0,00</span></div>
+        <div class="res-row"><span>Custo Líquido</span><span class="res-val" id="r_liquido">R$ 0,00</span></div>
+        <div class="res-row"><span>Carga total</span><span class="res-val" id="r_carga">0,00%</span></div>
+        <div class="res-row"><span>Mark up</span><span class="res-val" id="r_markup">0,0000</span></div>
+        <div class="res-row" style="margin-top:10px; border:none;"><span>Venda Atacado</span><span class="res-val highlight-atacado" id="r_atacado">R$ 0,00</span></div>
+        <div class="res-row" style="border:none;"><span>Venda Varejo</span><span class="res-val highlight-varejo" id="r_varejo">R$ 0,00</span></div>
     </div>
 
     <button class="btn-calc" onclick="calcular()">CALCULAR PREÇOS</button>
-    <button class="btn-clear" onclick="limpar()">Resetar Padrões</button>
 
     <script>
         const defaults = {
-            imp_compra: "27.25", imp_venda: "27.25", comissao: "0",
-            custos: "23", lucro_at: "14", lucro_va: "25"
+            icms_c: "18", pis_c: "1.65", cofins_c: "7.6", comis: "0", lucro: "14", desc: "2.5", custos_d: "23", icms_v: "18", pis_v: "1.65", confins_v: "7.6"
         };
 
         function init() {
@@ -201,30 +157,35 @@
 
         function fixar(id) {
             localStorage.setItem(id, document.getElementById(id).value);
-            alert("Padrão fixado com sucesso!");
-        }
-
-        function limpar() {
-            if(confirm("Deseja voltar para as configurações de fábrica?")) {
-                localStorage.clear();
-                location.reload();
-            }
+            alert("Valor fixado!");
         }
 
         function calcular() {
             const v = (id) => parseFloat(document.getElementById(id).value || 0);
-            const custoLiq = v('mercadoria') * (1 - (v('imp_compra')/100));
             
-            const calcPreco = (lucro) => {
-                const carga = (v('imp_venda') + v('comissao') + v('custos') + lucro) / 100;
-                return carga < 1 ? custoLiq / (1 - carga) : 0;
-            };
+            const impC_total = v('icms_c') + v('pis_c') + v('cofins_c');
+            document.getElementById('total_imp_c').innerText = impC_total.toFixed(2) + "%";
 
-            const fmt = (val) => val.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+            const impV_total = v('icms_v') + v('pis_v') + v('confins_v');
+            document.getElementById('total_imp_v').innerText = impV_total.toFixed(2) + "%";
 
-            document.getElementById('res_liq').innerText = fmt(custoLiq);
-            document.getElementById('res_atacado').innerText = fmt(calcPreco(v('lucro_at')));
-            document.getElementById('res_varejo').innerText = fmt(calcPreco(v('lucro_va')));
+            const merc = v('mercadoria');
+            const bruto = merc + v('st') + v('ipi') + v('frete');
+            const liquido = bruto - (merc * (impC_total / 100));
+
+            const cargaTotal = (v('comis') + v('lucro') + v('desc') + v('custos_d') + impV_total) / 100;
+            const markup = 1 - cargaTotal;
+
+            const atacado = markup > 0 ? liquido / markup : 0;
+            const varejo = atacado / 0.85;
+
+            const f = (n) => n.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+            document.getElementById('r_bruto').innerText = f(bruto);
+            document.getElementById('r_liquido').innerText = f(liquido);
+            document.getElementById('r_carga').innerText = (cargaTotal * 100).toFixed(2) + "%";
+            document.getElementById('r_markup').innerText = markup.toFixed(4);
+            document.getElementById('r_atacado').innerText = f(atacado);
+            document.getElementById('r_varejo').innerText = f(varejo);
         }
 
         init();
