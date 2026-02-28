@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Precificador DuChapéu</title>
+    
+    <link rel="apple-touch-icon" href="duchapeu_logo.png">
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f2f2f7;
+            --accent: #b8860b; /* Tom Dourado/Bronze para combinar com a marca */
+            --dark: #1c1c1e;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        body { 
+            font-family: -apple-system, system-ui, sans-serif;
+            background-color: var(--bg);
+            color: #1c1c1e;
+            margin: 0; padding: 20px;
+            padding-top: env(safe-area-inset-top);
+        }
+
+        .logo-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .logo-container img {
+            max-height: 80px;
+            max-width: 220px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .section-header { 
+            font-size: 11px; font-weight: 600; color: #8e8e93; 
+            margin: 15px 0 8px 10px; text-transform: uppercase; letter-spacing: 0.8px;
+        }
+
+        .card { 
+            background: var(--glass);
+            border-radius: 18px;
+            padding: 5px 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            margin-bottom: 15px;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .input-group {
+            display: flex; align-items: center;
+            padding: 14px 0;
+            border-bottom: 0.5px solid rgba(0,0,0,0.05);
+        }
+        .input-group:last-child { border-bottom: none; }
+
+        .icon-box {
+            width: 30px; height: 30px; border-radius: 8px;
+            background: rgba(184, 134, 11, 0.1); color: var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            margin-right: 12px; font-size: 14px;
+        }
+
+        label { flex: 1; font-size: 15px; font-weight: 500; }
+
+        input {
+            width: 90px; border: none; background: #f2f2f7;
+            text-align: right; font-size: 16px; font-weight: 700;
+            color: var(--dark); outline: none; padding: 8px; border-radius: 8px;
+        }
+
+        .btn-save {
+            font-size: 10px; font-weight: 700; color: #34c759;
+            background: rgba(52, 199, 89, 0.1); padding: 6px 10px;
+            border-radius: 6px; border: none; margin-left: 10px;
+        }
+
+        /* Painel de Resultados Premium */
+        .result-panel {
+            background: var(--dark); color: #fff;
+            border-radius: 22px; padding: 25px;
+            margin-top: 20px; box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+            background: linear-gradient(145deg, #1c1c1e 0%, #3a3a3c 100%);
+        }
+
+        .res-main { text-align: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .res-main span { font-size: 11px; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
+        .res-main h2 { font-size: 32px; margin: 8px 0; color: #fff; font-weight: 700; }
+
+        .res-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .res-box { text-align: center; padding: 12px; border-radius: 14px; background: rgba(255,255,255,0.05); }
+        .res-box span { font-size: 10px; opacity: 0.5; font-weight: 600; }
+        .res-box div { font-size: 19px; font-weight: 700; margin-top: 6px; }
+
+        .btn-calc {
+            width: 100%; padding: 18px; border-radius: 16px; border: none;
+            background: var(--accent); color: #fff; font-size: 17px; font-weight: 700;
+            margin-top: 25px; box-shadow: 0 6px 15px rgba(184, 134, 11, 0.3);
+        }
+        
+        .btn-clear {
+            width: 100%; background: none; color: #ff3b30; border: none;
+            font-size: 13px; font-weight: 500; margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo-container">
+        <img src="duchapeu_logo.png" alt="DuChapéu Logo" onerror="this.src='https://via.placeholder.com/200x80?text=DuChapéu'">
+    </div>
+
+    <div class="section-header">Entrada de Valores</div>
+    <div class="card">
+        <div class="input-group">
+            <div class="icon-box"><i class="fa-solid fa-tag"></i></div>
+            <label>Custo Mercadoria</label>
+            <input type="number" id="mercadoria" placeholder="0,00" oninput="calcular()">
+        </div>
+        <div class="input-group">
+            <div class="icon-box"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+            <label>Imposto Compra (%)</label>
+            <input type="number" id="imp_compra" step="0.01">
+            <button class="btn-save" onclick="fixar('imp_compra')">FIXAR</button>
+        </div>
+    </div>
+
+    <div class="section-header">Taxas Operacionais</div>
+    <div class="card">
+        <div class="input-group">
+            <div class="icon-box"><i class="fa-solid fa-percent"></i></div>
+            <label>Imposto Venda (%)</label>
+            <input type="number" id="imp_venda">
+            <button class="btn-save" onclick="fixar('imp_venda')">FIXAR</button>
+        </div>
+        <div class="input-group">
+            <div class="icon-box"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+            <label>Comissão (%)</label>
+            <input type="number" id="comissao">
+            <button class="btn-save" onclick="fixar('comissao')">FIXAR</button>
+        </div>
+        <div class="input-group">
+            <div class="icon-box"><i class="fa-solid fa-warehouse"></i></div>
+            <label>Custos Fixos (%)</label>
+            <input type="number" id="custos">
+            <button class="btn-save" onclick="fixar('custos')">FIXAR</button>
+        </div>
+    </div>
+
+    <div class="section-header">Margem de Lucro Desejada</div>
+    <div class="card">
+        <div class="input-group">
+            <div class="icon-box" style="color: #34c759;"><i class="fa-solid fa-boxes-stacked"></i></div>
+            <label>Atacado (%)</label>
+            <input type="number" id="lucro_at">
+            <button class="btn-save" onclick="fixar('lucro_at')">FIXAR</button>
+        </div>
+        <div class="input-group">
+            <div class="icon-box" style="color: #ff9500;"><i class="fa-solid fa-shop"></i></div>
+            <label>Varejo (%)</label>
+            <input type="number" id="lucro_va">
+            <button class="btn-save" onclick="fixar('lucro_va')">FIXAR</button>
+        </div>
+    </div>
+
+    <div class="result-panel">
+        <div class="res-main">
+            <span>Custo Líquido</span>
+            <h2 id="res_liq">R$ 0,00</h2>
+        </div>
+        <div class="res-grid">
+            <div class="res-box">
+                <span>PREÇO ATACADO</span>
+                <div id="res_atacado" style="color: #34c759;">R$ 0,00</div>
+            </div>
+            <div class="res-box">
+                <span>PREÇO VAREJO</span>
+                <div id="res_varejo" style="color: #ff9500;">R$ 0,00</div>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-calc" onclick="calcular()">CALCULAR PREÇOS</button>
+    <button class="btn-clear" onclick="limpar()">Resetar Padrões</button>
+
+    <script>
+        const defaults = {
+            imp_compra: "27.25", imp_venda: "27.25", comissao: "0",
+            custos: "23", lucro_at: "14", lucro_va: "25"
+        };
+
+        function init() {
+            Object.keys(defaults).forEach(id => {
+                document.getElementById(id).value = localStorage.getItem(id) || defaults[id];
+            });
+            calcular();
+        }
+
+        function fixar(id) {
+            localStorage.setItem(id, document.getElementById(id).value);
+            alert("Padrão fixado com sucesso!");
+        }
+
+        function limpar() {
+            if(confirm("Deseja voltar para as configurações de fábrica?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        function calcular() {
+            const v = (id) => parseFloat(document.getElementById(id).value || 0);
+            const custoLiq = v('mercadoria') * (1 - (v('imp_compra')/100));
+            
+            const calcPreco = (lucro) => {
+                const carga = (v('imp_venda') + v('comissao') + v('custos') + lucro) / 100;
+                return carga < 1 ? custoLiq / (1 - carga) : 0;
+            };
+
+            const fmt = (val) => val.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+
+            document.getElementById('res_liq').innerText = fmt(custoLiq);
+            document.getElementById('res_atacado').innerText = fmt(calcPreco(v('lucro_at')));
+            document.getElementById('res_varejo').innerText = fmt(calcPreco(v('lucro_va')));
+        }
+
+        init();
+    </script>
+</body>
+</html>
