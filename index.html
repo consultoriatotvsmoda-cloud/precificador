@@ -9,7 +9,6 @@
     <style>
         :root { --bg: #f2f2f7; --accent: #b8860b; --dark: #1c1c1e; --success: #34c759; }
         
-        /* Reset para evitar números brancos */
         * { color: #1c1c1e; } 
         
         body { 
@@ -39,7 +38,6 @@
         
         label { flex: 1; font-size: 14px; font-weight: 500; color: #3a3a3c; }
 
-        /* Estilo forçado para os Inputs não ficarem brancos */
         .input-wrapper { 
             display: flex; 
             align-items: center; 
@@ -58,11 +56,10 @@
             font-size: 16px; 
             font-weight: 700; 
             outline: none; 
-            color: #000000 !important; /* Força cor preta no texto */
-            -webkit-text-fill-color: #000000 !important; /* Força cor preta no iOS */
+            color: #000000 !important; 
+            -webkit-text-fill-color: #000000 !important; 
         }
 
-        /* Linhas de totais com cor de fundo diferente para destaque */
         .total-row { background: #fff9e6; border-radius: 10px; margin: 5px -5px; padding: 10px; }
         .total-row label { color: var(--accent); font-weight: 700; }
         .total-row span { color: var(--accent); font-weight: 800; }
@@ -73,7 +70,6 @@
             border-radius: 6px; border: none; margin-left: 8px; 
         }
 
-        /* Painel de Resultados (Texto Branco aqui é OK porque o fundo é Escuro) */
         .res-panel { 
             background: var(--dark); 
             border-radius: 22px; 
@@ -92,6 +88,8 @@
             -webkit-text-fill-color: #ffffff !important;
             font-size: 17px; font-weight: 700; margin-top: 20px; 
         }
+
+        .ipi-info { font-size: 10px; color: #8e8e93; margin-left: 5px; font-weight: normal; }
     </style>
 </head>
 <body>
@@ -104,7 +102,14 @@
     <div class="card">
         <div class="row"><label>Mercadoria</label><div class="input-wrapper"><span class="currency-prefix">R$</span><input type="number" id="mercadoria" oninput="calcular()"></div></div>
         <div class="row"><label>Subst. Tributária</label><div class="input-wrapper"><span class="currency-prefix">R$</span><input type="number" id="st" oninput="calcular()"></div></div>
-        <div class="row"><label>IPI</label><div class="input-wrapper"><span class="currency-prefix">R$</span><input type="number" id="ipi" oninput="calcular()"></div></div>
+        <!-- Alterado para cálculo via percentual conforme solicitado -->
+        <div class="row">
+            <label>IPI (%)</label>
+            <div class="input-wrapper">
+                <input type="number" id="ipi_p" placeholder="0" oninput="calcular()">
+                <span class="ipi-info" id="ipi_val_rs">R$ 0,00</span>
+            </div>
+        </div>
         <div class="row"><label>FRETE + SEGUROS</label><div class="input-wrapper"><span class="currency-prefix">R$</span><input type="number" id="frete" oninput="calcular()"></div></div>
     </div>
 
@@ -132,7 +137,7 @@
         <div class="row total-row"><label>Impostos total</label><span id="total_imp_v">0,00%</span></div>
     </div>
 
-    <div class="result-panel">
+    <div class="res-panel">
         <div class="res-row"><span>Custo bruto</span><span class="res-val" id="r_bruto">R$ 0,00</span></div>
         <div class="res-row"><span>Custo Líquido</span><span class="res-val" id="r_liquido">R$ 0,00</span></div>
         <div class="res-row"><span>Carga total</span><span class="res-val" id="r_carga">0,00%</span></div>
@@ -162,24 +167,35 @@
 
         function calcular() {
             const v = (id) => parseFloat(document.getElementById(id).value || 0);
+            const f = (n) => n.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
             
+            // Impostos Compra
             const impC_total = v('icms_c') + v('pis_c') + v('cofins_c');
             document.getElementById('total_imp_c').innerText = impC_total.toFixed(2) + "%";
 
+            // Impostos Venda
             const impV_total = v('icms_v') + v('pis_v') + v('confins_v');
             document.getElementById('total_imp_v').innerText = impV_total.toFixed(2) + "%";
 
+            // Cálculo do IPI (Percentual * Mercadoria)
             const merc = v('mercadoria');
-            const bruto = merc + v('st') + v('ipi') + v('frete');
+            const ipi_percentual = v('ipi_p');
+            const ipi_reais = merc * (ipi_percentual / 100);
+            document.getElementById('ipi_val_rs').innerText = f(ipi_reais);
+
+            // Custo Bruto e Líquido
+            const bruto = merc + v('st') + ipi_reais + v('frete');
             const liquido = bruto - (merc * (impC_total / 100));
 
+            // Markup
             const cargaTotal = (v('comis') + v('lucro') + v('desc') + v('custos_d') + impV_total) / 100;
             const markup = 1 - cargaTotal;
 
+            // Preços Finais
             const atacado = markup > 0 ? liquido / markup : 0;
             const varejo = atacado / 0.85;
 
-            const f = (n) => n.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+            // Update UI
             document.getElementById('r_bruto').innerText = f(bruto);
             document.getElementById('r_liquido').innerText = f(liquido);
             document.getElementById('r_carga').innerText = (cargaTotal * 100).toFixed(2) + "%";
