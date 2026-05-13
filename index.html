@@ -31,7 +31,6 @@
         .row:last-child { border-bottom: none; }
         label { flex: 1; font-size: 14px; font-weight: 500; color: #3a3a3c; }
         
-        /* Estilo dos campos de input */
         .input-wrapper { 
             display: flex; 
             align-items: center; 
@@ -40,15 +39,16 @@
             border-radius: 8px; 
         }
         
-        /* Container para os dois campos de IPI na mesma linha */
         .double-input {
             display: flex;
             gap: 8px;
-            flex: 2; /* Dá mais espaço para os inputs comparado ao label */
+            flex: 2;
             justify-content: flex-end;
         }
 
-        .currency-prefix { font-size: 12px; font-weight: 700; color: #3a3a3c; margin-right: 4px; }
+        .currency-prefix, .percent-suffix { font-size: 12px; font-weight: 700; color: #3a3a3c; }
+        .currency-prefix { margin-right: 4px; }
+        .percent-suffix { margin-left: 4px; }
         
         input { 
             width: 75px; 
@@ -94,18 +94,19 @@
 
     <div class="section-header">Custo de Aquisição</div>
     <div class="card">
-        <div class="row"><label>Mercadoria</label><div class="input-wrapper"><span class="currency-prefix">R$</span><input type="number" id="mercadoria" oninput="calcular()"></div></div>
+        <div class="row"><label>Mercadoria</label><div class="input-wrapper"><span class="currency-prefix">R$</span><input type="number" id="mercadoria" oninput="ajustarIPI('percent')"></div></div>
         <div class="row"><label>Subst. Tributária</label><div class="input-wrapper"><span class="currency-prefix">R$</span><input type="number" id="st" oninput="calcular()"></div></div>
         
         <div class="row">
             <label>IPI (% e R$)</label>
             <div class="double-input">
-                <div class="input-wrapper" style="width: 80px;">
-                    <input type="number" id="ipi_p" placeholder="%" oninput="ajustarIPI('percent')" style="width: 100%;">
+                <div class="input-wrapper" style="width: 85px;">
+                    <input type="number" id="ipi_p" placeholder="0" oninput="ajustarIPI('percent')" style="width: 100%;">
+                    <span class="percent-suffix">%</span>
                 </div>
-                <div class="input-wrapper" style="width: 110px;">
+                <div class="input-wrapper" style="width: 115px;">
                     <span class="currency-prefix">R$</span>
-                    <input type="number" id="ipi_v" placeholder="Valor" oninput="ajustarIPI('valor')" style="width: 100%;">
+                    <input type="number" id="ipi_v" placeholder="0.00" oninput="ajustarIPI('valor')" style="width: 100%;">
                 </div>
             </div>
         </div>
@@ -155,7 +156,8 @@
 
         function init() {
             Object.keys(defaults).forEach(id => {
-                document.getElementById(id).value = localStorage.getItem(id) || defaults[id];
+                const el = document.getElementById(id);
+                if(el) el.value = localStorage.getItem(id) || defaults[id];
             });
             calcular();
         }
